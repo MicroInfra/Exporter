@@ -90,9 +90,9 @@ def start_task():
         else:
             metrics[row['name']].set(row['value'])
 
-    if 'microinfra_exporter_timing_ms' not in metrics:
-        metrics['microinfra_exporter_timing_ms'] = Gauge('microinfra_exporter_timing_ms', 'Timing of requests ms')
-    metrics['microinfra_exporter_timing_ms'].set((time.time() - start) * 1000)
+    if 'microinfra_exporter_latency_ms' not in metrics:
+        metrics['microinfra_exporter_latency_ms'] = Gauge('microinfra_exporter_latency_ms', 'Timing of requests ms')
+    metrics['microinfra_exporter_latency_ms'].set((time.time() - start) * 1000)
     return ''
 
 

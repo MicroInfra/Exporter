@@ -4,5 +4,3 @@ services:
     build: .
     ports:
       - 60102:60102 # first is host port, second is container port
-    environment:
-      RUN_ON_LOCALHOST: True
