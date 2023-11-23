@@ -13,7 +13,7 @@ app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
 })
 metrics: tp.Dict[str, tp.Any] = {}
 AUTH_TOKEN = os.getenv('AUTH_TOKEN', None)
-DEBUG = False
+DEBUG = str(os.getenv('DEBUG')).lower() == 'true' or False
 
 
 @app.route('/load_metrics', methods=['POST'])
@@ -65,6 +65,8 @@ def start_task():
                     if DEBUG:
                         print('creating label for ', row['name'])
                     metrics[row['name']] = Counter(row['name'], row['name'], ['code'])
+                elif 'url_rps' in row['name']:
+                    metrics[row['name']] = Counter(row['name'], row['name'], ['url'])
                 else:
                     metrics[row['name']] = Counter(row['name'], row['name'])
             elif row['type'] == 'histogram':
@@ -79,6 +81,11 @@ def start_task():
                 if DEBUG:
                     print('setting label for ', row['name'], code)
                 metrics[row['name']].labels(code).inc(row['value'])
+            elif row.get('labels') and 'url_rps' in row['name'] and 'url' in row.get('labels'):
+                url = row['labels']['url']
+                if DEBUG:
+                    print('setting label for ', row['name'], url)
+                metrics[row['name']].labels(url).inc(row['value'])
             else:
                 metrics[row['name']].inc(row['value'])
             # if row.get('labels'):
@@ -98,4 +105,5 @@ def start_task():
 
 if __name__ == '__main__':
 
+    # start_task()
     app.run(host='0.0.0.0', port=60123)
